@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yealink DSP Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Initial Setup View (Shown only on first run) -->
+    <div id="setup-view" class="view">
+        <div class="setup-container">
+            <h1>Configure Your First DSP</h1>
+            <p>Enter the connection details for your Yealink DSP to get started.</p>
+            <div id="setup-message-area" class="message"></div>
+            <div class="form-group">
+                <label for="setup_dspNameInput">Device Name (e.g., Conference Room A)</label>
+                <input type="text" id="setup_dspNameInput" placeholder="Conference Room A">
+            </div>
+            <div class="form-group">
+                <label for="setup_dspIpInput">IP Address</label>
+                <input type="text" id="setup_dspIpInput" placeholder="192.168.5.110">
+            </div>
+            <div class="form-group">
+                <label for="setup_dspPortInput">Telnet Port</label>
+                <input type="number" id="setup_dspPortInput" value="6024">
+            </div>
+            <div class="form-group">
+                <label for="setup_dspUsernameInput">Telnet Username</label>
+                <input type="text" id="setup_dspUsernameInput" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label for="setup_dspPasswordInput">Telnet Password (optional)</label>
+                <input type="password" id="setup_dspPasswordInput" placeholder="Leave blank if none">
+            </div>
+            <button id="initialSaveDeviceButton" class="control-button">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Add Device Modal -->
+    <div id="add-device-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Add New DSP</h2>
+            <div id="modal-message-area" class="message"></div>
+            <div class="form-group">
+                <label for="modal_dspNameInput">Device Name</label>
+                <input type="text" id="modal_dspNameInput" placeholder="Board Room">
+            </div>
+            <div class="form-group">
+                <label for="modal_dspIpInput">IP Address</label>
+                <input type="text" id="modal_dspIpInput" placeholder="192.168.5.111">
+            </div>
+            <div class="form-group">
+                <label for="modal_dspPortInput">Telnet Port</label>
+                <input type="number" id="modal_dspPortInput" value="6024">
+            </div>
+            <div class="form-group">
+                <label for="modal_dspUsernameInput">Telnet Username</label>
+                <input type="text" id="modal_dspUsernameInput" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label for="modal_dspPasswordInput">Telnet Password (optional)</label>
+                <input type="password" id="modal_dspPasswordInput" placeholder="Leave blank if none">
+            </div>
+            <div class="modal-buttons">
+                <button id="modalSaveDeviceButton" class="control-button">Save Device</button>
+                <button id="modalCancelButton" class="control-button secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Control Panel View -->
+    <div id="control-panel-view" class="view" style="display: none;">
+        <div id="device-menu" class="device-menu">
+            <h2>Manage DSPs</h2>
+            <ul id="device-list"></ul>
+            <button id="addNewDeviceBtn" class="control-button">Add New DSP</button>
+        </div>
+        <div id="menu-overlay"></div>
+
+        <div class="container">
+            <header class="main-header">
+                <button id="menu-button" class="menu-button">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="title-group">
+                    <h1>Yealink DSP Advanced Control</h1>
+                    <p id="active-dsp-display" class="version-info">No Device Selected</p>
+                </div>
+            </header>
+            
+            <div id="messageArea" class="message"></div>
+
+            <div class="main-content-grid">
+                <!-- System Control -->
+                <div class="control-section" id="system-control">
+                    <h2>System Control</h2>
+                    <div class="command-group">
+                        <label for="systemStatusSelect">Select Action:</label>
+                        <select id="systemStatusSelect">
+                            <option value="reboot">Reboot</option>
+                            <option value="reset">Factory Reset (Caution!)</option>
+                        </select>
+                        <input type="text" id="systemSnInput" placeholder="Optional SN">
+                        <button id="setSystemStatusButton" class="control-button">Set Device Status</button>
+                    </div>
+                    <div class="command-group">
+                        <button id="getHardwareInfoButton" class="control-button">Get Hardware Info (GPIO)</button>
+                        <div class="status-display">
+                            <strong>Hardware Info:</strong> <pre id="hardwareInfoStatus">Not fetched</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divisible Room Control -->
+                <div class="control-section" id="division-control">
+                    <h2>Divisible Room Control</h2>
+                    <div class="command-group">
+                        <label for="divisionStatusSelect">Set Division Status:</label>
+                        <select id="divisionStatusSelect">
+                            <option value="0">0: Merged</option>
+                            <option value="1">1: Divided</option>
+                        </select>
+                        <button id="setDivisionStatusButton" class="control-button">Set Division Status</button>
+                    </div>
+                    <div class="command-group">
+                        <button id="getDivisionStatusButton" class="control-button">Get Division Status</button>
+                        <div class="status-display">
+                            <strong>Division Status:</strong> <span id="divisionStatus">Not fetched</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Control -->
+                <div class="control-section" id="audio-control">
+                    <h2>Audio Control</h2>
+                    <div class="command-group">
+                        <button id="getMuteStatusButton" class="control-button">Get Mute Status</button>
+                        <div class="status-display"><strong>Mute Status:</strong> <span id="muteStatus">...</span></div>
+                    </div>
+                    <div class="command-group">
+                        <button id="setMuteOnButton" class="control-button">Set Mute ON</button>
+                        <button id="setMuteOffButton" class="control-button">Set Mute OFF</button>
+                    </div>
+                    <div class="command-group">
+                        <button id="getPickupChannelInfoButton" class="control-button">Get Pickup Channel Info</button>
+                        <div class="status-display"><strong>Pickup Channel Info:</strong> <pre id="pickupChannelInfoStatus">...</pre></div>
+                    </div>
+                    <div class="command-group">
+                        <button id="getDeviceChannelActiveButton" class="control-button">Get Channel Active Status</button>
+                        <div class="status-display"><strong>Channel Active Status:</strong> <pre id="deviceChannelActiveStatus">...</pre></div>
+                    </div>
+                    <div class="command-group">
+                        <button id="getSoundSourceLocationButton" class="control-button">Get Sound Source Location</button>
+                        <div class="status-display"><strong>Sound Source Location:</strong> <pre id="soundSourceLocationStatus">...</pre></div>
+                    </div>
+                    <div class="command-group form-group">
+                        <label for="channelGainNameSet">Channel Name for Set Gain:</label>
+                        <select id="channelGainNameSet"></select>
+                        <label for="channelGainValueSet">Gain Value (dB):</label>
+                        <select id="channelGainValueSet"></select>
+                        <button id="setChannelGainButton" class="control-button">Set Device Channel Gain</button>
+                    </div>
+                    <div class="command-group form-group">
+                        <label for="channelGainNameGet">Channel Name for Get Gain:</label>
+                        <select id="channelGainNameGet"></select>
+                        <button id="getChannelGainButton" class="control-button">Get Device Channel Gain</button>
+                        <div class="status-display"><strong>Channel Gain Values:</strong> <pre id="channelGainStatus">...</pre></div>
+                    </div>
+                    <div class="command-group">
+                        <button id="getPresetInfoButton" class="control-button">Get Preset Information</button>
+                        <div class="status-display"><strong>Preset Info:</strong> <pre id="presetInfoStatus">...</pre></div>
+                    </div>
+                    <div class="command-group form-group">
+                        <label for="presetIdSet">Preset ID to Set:</label>
+                        <input type="text" id="presetIdSet" placeholder="e.g., general_preset">
+                        <button id="setPresetButton" class="control-button">Set Device Preset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

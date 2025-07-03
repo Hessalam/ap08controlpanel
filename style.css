@@ -1,0 +1,276 @@
+/* --- Yealink Color Palette --- */
+:root {
+    --aquamarine: #5cfec2;
+    --black-russian: #000004;
+    --niagara: #08b286;
+    --light-text: #e0e0e0;
+    --dark-bg-primary: #121212;
+    --dark-bg-secondary: #1e1e1e;
+    --dark-border: #333333;
+    --error-red: #e74c3c;
+    --info-blue: #3498db;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--black-russian);
+    background-image: radial-gradient(circle at top, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 40%);
+    color: var(--light-text);
+    margin: 0;
+}
+
+.view {
+    width: 100%;
+}
+
+#setup-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#control-panel-view {
+    /* This view will now just be a block container, letting its child center itself. */
+}
+
+/* --- Setup and Modal Styles --- */
+.setup-container, .modal-content {
+    background-color: var(--dark-bg-primary);
+    padding: 30px 40px;
+    border-radius: 12px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+.setup-container h1, .modal-content h2 {
+    color: var(--aquamarine);
+    margin-top: 0;
+}
+.setup-container p {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* --- Main Control Panel --- */
+.container {
+    background-color: var(--dark-bg-primary);
+    padding: 30px 40px;
+    border-radius: 12px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(8, 178, 134, 0.2);
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    margin: 30px auto; /* This is the key fix: centers the container horizontally */
+}
+.main-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    position: relative;
+}
+.title-group {
+    flex-grow: 1;
+    text-align: center;
+}
+h1 {
+    text-align: center;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, var(--niagara), var(--aquamarine));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; color: transparent;
+}
+.version-info {
+    text-align: center;
+    color: var(--niagara);
+    font-size: 0.9em;
+    margin: 5px 0 0 0;
+}
+
+/* --- Device Menu --- */
+.menu-button {
+    background: none; border: none; padding: 10px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 5px; z-index: 102;
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+}
+.menu-button span {
+    width: 25px; height: 3px; background-color: var(--light-text);
+    border-radius: 2px; transition: all 0.3s ease;
+}
+.device-menu {
+    position: fixed; top: 0; left: -350px;
+    width: 300px; height: 100%;
+    background-color: var(--dark-bg-secondary);
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    padding: 20px; z-index: 101;
+    transition: left 0.3s ease-in-out;
+    display: flex; flex-direction: column;
+}
+.device-menu.open { left: 0; }
+.device-menu h2 { color: var(--aquamarine); }
+#device-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+#device-list li {
+    padding: 15px; border-radius: 5px;
+    margin-bottom: 10px; cursor: pointer;
+    border: 1px solid var(--dark-border);
+    transition: background-color 0.2s, border-color 0.2s;
+    display: flex; justify-content: space-between; align-items: center;
+}
+#device-list li:hover { background-color: #2a2a2a; }
+#device-list li.active {
+    background-color: rgba(92, 254, 194, 0.1);
+    border-color: var(--aquamarine);
+    font-weight: bold;
+}
+.delete-btn {
+    background: none; border: none; color: #888;
+    cursor: pointer; font-size: 1.2em;
+    padding: 5px; transition: color 0.2s;
+}
+.delete-btn:hover { color: var(--error-red); }
+#menu-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 100; display: none;
+}
+#menu-overlay.visible { display: block; }
+
+/* --- Layout Grid & Sections --- */
+.main-content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+#audio-control { grid-column: 1 / -1; }
+.control-section {
+    background-color: var(--dark-bg-secondary); padding: 25px;
+    border-radius: 8px; border: 1px solid var(--dark-border);
+    margin: 0; display: flex; flex-direction: column;
+}
+h2 {
+    color: var(--niagara); margin-top: 0; margin-bottom: 25px;
+    font-size: 1.5em; border-bottom: 1px solid var(--dark-border);
+    padding-bottom: 12px; font-weight: 500;
+}
+.command-group { margin-bottom: 20px; }
+.command-group:last-child { margin-bottom: 0; }
+.command-group label {
+    display: block; margin-bottom: 8px;
+    font-weight: 500; color: #aaa; font-size: 0.9em;
+}
+
+/* --- Inputs and Selects --- */
+input[type="text"], input[type="password"], input[type="number"], select {
+    width: 100%; padding: 12px; margin-bottom: 15px;
+    border: 1px solid #444; border-radius: 5px;
+    box-sizing: border-box; font-size: 1em;
+    background-color: #2a2a2a; color: var(--light-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none; -moz-appearance: none; appearance: none;
+}
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right 1rem center;
+    background-size: 1em; padding-right: 2.5rem;
+}
+input:focus, select:focus {
+    border-color: var(--aquamarine);
+    box-shadow: 0 0 0 3px rgba(92, 254, 194, 0.25);
+    outline: none;
+}
+
+/* --- Advanced Styled Buttons --- */
+@keyframes pulse-border {
+    from { box-shadow: 0 0 5px -2px var(--aquamarine), 0 0 5px -2px var(--aquamarine) inset; }
+    to { box-shadow: 0 0 15px 3px var(--aquamarine), 0 0 10px 2px var(--aquamarine) inset; }
+}
+@keyframes sound-wave-trail {
+    0% { transform: translate(-150%, -50%); opacity: 0; }
+    20% { opacity: 0.2; }
+    80% { opacity: 0.2; }
+    100% { transform: translate(400%, -50%); opacity: 0; }
+}
+
+.control-button {
+    background-color: var(--niagara); color: var(--black-russian);
+    font-weight: bold; border: 2px solid var(--niagara);
+    padding: 12px 20px; text-align: center; font-size: 1em;
+    border-radius: 5px; cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin: 5px 0; width: 100%; box-sizing: border-box;
+    position: relative; overflow: hidden;
+}
+.control-button.secondary {
+    background-color: transparent;
+    border-color: #555;
+    color: #aaa;
+}
+.control-button.secondary:hover {
+    border-color: var(--light-text);
+    color: var(--light-text);
+    animation: none; /* Disable pulse for secondary buttons */
+}
+.control-button::after {
+    content: ')))'; position: absolute; top: 50%; left: 0;
+    transform: translate(-150%, -50%); font-family: monospace;
+    font-size: 2.2em; font-weight: bold; color: var(--aquamarine);
+    letter-spacing: -4px; text-shadow: 0 0 8px var(--aquamarine);
+    pointer-events: none; opacity: 0;
+}
+.control-button:not(.secondary):hover {
+    background-color: transparent; color: var(--aquamarine);
+    border-color: var(--aquamarine);
+    animation: pulse-border 2s ease-in-out infinite alternate;
+}
+.control-button:not(.secondary):hover::after {
+    animation: sound-wave-trail 2.5s linear infinite;
+    animation-delay: 0.2s;
+}
+.control-button:active {
+    transform: scale(0.98);
+    background-color: rgba(92, 254, 194, 0.1);
+}
+
+/* --- Status Displays & Messages --- */
+.status-display {
+    background-color: var(--black-russian); padding: 15px;
+    border-radius: 4px; margin-top: 15px; font-size: 0.95em;
+    line-height: 1.6; border: 1px solid var(--dark-border);
+    flex-grow: 1;
+}
+.status-display strong { color: var(--niagara); margin-right: 8px; font-weight: 500; }
+.status-display span, .status-display pre {
+    font-weight: bold; color: var(--aquamarine);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+pre {
+    white-space: pre-wrap; word-wrap: break-word; background-color: transparent;
+    padding: 0; margin: 0; border: none; font-size: 0.9em;
+    max-height: 250px; overflow-y: auto;
+}
+.message {
+    padding: 12px 20px; margin-bottom: 25px; border-radius: 5px;
+    text-align: center; font-size: 1em; font-weight: 500;
+    display: none; background-color: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border); border-left-width: 5px;
+}
+.message.success { border-left-color: var(--niagara); color: var(--niagara); display: block; }
+.message.error { border-left-color: var(--error-red); color: var(--error-red); display: block; }
+.message.info { border-left-color: var(--info-blue); color: var(--info-blue); display: block; }
